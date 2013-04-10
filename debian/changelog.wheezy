@@ -1,0 +1,5 @@
+appscale (1.6-9.REVNOlucid) lucid; urgency=low
+
+  * Working on porting to Debian wheezy
+
+ -- Alex Nordlund <depe.alexander@gmail.com.com>  Wed, 10 Apr 2013 10:37:05 -0700
