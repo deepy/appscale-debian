@@ -40,7 +40,7 @@ curl -d "key=appscale" http://heart-beat.appspot.com/sign
 
 export APPSCALE_HOME_RUNTIME=`pwd`
 
-apt-get update
+#apt-get update //TODO: WaveLAN is too slow ;_;
 
 if [ "$DIST" = "lucid" ]; then
     echo "Running lucid specific commands"
@@ -58,7 +58,7 @@ if [ "$DIST" = "lucid" ]; then
 
 fi
 
-apt-get update
+#apt-get update //TODO: WaveLAN is too slow ;_;
 
 # Solves the localization error messages 
 export LANGUAGE=en_US.UTF-8
@@ -115,6 +115,8 @@ elif [ "${DIST}" = "lucid" ]; then
 	apt-get -y install libmysqlclient16
 elif [ "${DIST}" = "karmic" ]; then
     	apt-get install -y libboost1.40-dev
+elif [ "${DIST}" = "wheezy" ]; then
+        apt-get install -y libboost1.49-dev
 fi
 if [ $? -ne 0 ]; then
     echo "Fail to install depending packages for building."
