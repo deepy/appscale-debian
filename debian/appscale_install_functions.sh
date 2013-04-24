@@ -475,9 +475,10 @@ installgems()
     wget http://s3.amazonaws.com/appscale-build/rubygems-1.3.7.tgz
     tar zxvf rubygems-1.3.7.tgz
     cd rubygems-1.3.7
-    ruby setup.rb
+    ruby1.8 setup.rb
     cd
-    ln -sf /usr/bin/gem1.8 /usr/bin/gem
+    #ln -sf /usr/bin/gem1.8 /usr/bin/gem
+    update-alternatives --install /usr/bin/gem gem /usr/bin/gem1.8 1 
     rm -rf rubygems-1.3.7.tgz
     rm -rf rubygems-1.3.7
 
