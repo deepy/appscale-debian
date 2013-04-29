@@ -60,10 +60,11 @@ setupntpcron()
 
 installpython27()
 {
-    cd /usr/local
-    wget http://s3.amazonaws.com/appscale-build/Python-2.7.3.tgz
-    tar zxvf Python-2.7.3.tgz
-    rm /usr/local/Python-2.7.3.tgz
+    #cd /usr/local
+    #wget http://s3.amazonaws.com/appscale-build/Python-2.7.3.tgz
+    #tar zxvf Python-2.7.3.tgz
+    #rm /usr/local/Python-2.7.3.tgz
+    apt-get install python2.7
 }
 
 installnumpy()
@@ -73,10 +74,10 @@ installnumpy()
     wget http://s3.amazonaws.com/appscale-build/appscale-numpy-1.7.0.tar.gz
     tar zxvf appscale-numpy-1.7.0.tar.gz
     cd numpy-1.7.0
-    /usr/local/Python-2.7.3/python setup.py install
+    python2.7 setup.py install
     cd ..
     rm appscale-numpy-1.7.0.tar.gz
-    rm -fdr numpy-1.7.0
+    rm -fr numpy-1.7.0
 }
 
 installmatplotlib()
@@ -86,9 +87,9 @@ installmatplotlib()
     wget http://s3.amazonaws.com/appscale-build/matplotlib-1.2.0.tar.gz
     tar zxvf matplotlib-1.2.0.tar.gz
     cd matplotlib-1.2.0
-    /usr/local/Python-2.7.3/python setup.py install
+    python2.7 setup.py install
     cd ..
-    rm -fdr matplotlib-1.2.0*
+    rm -fr matplotlib-1.2.0*
 }
 
 installPIL()
@@ -98,9 +99,9 @@ installPIL()
     wget http://s3.amazonaws.com/appscale-build/Imaging-1.1.7.tar.gz
     tar zxvf Imaging-1.1.7.tar.gz
     cd Imaging-1.1.7
-    /usr/local/Python-2.7.3/python setup.py install
+    python2.7 setup.py install
     cd ..
-    rm -fdr Imaging-1.1.7*
+    rm -fr Imaging-1.1.7*
 }
 
 installpycrypto()
@@ -457,7 +458,7 @@ installhypertablemonitoring()
     make
     make install
     cd bindings/ruby/
-    ARCHFLAGS="-arch ${ARCH}" ruby extconf.rb --with-rrd-dir=/opt/rrdtool-1.4.4/
+    ARCHFLAGS="-arch ${ARCH}" ruby1.8 extconf.rb --with-rrd-dir=/opt/rrdtool-1.4.4/
     make
     make install
     cp RRD.so /usr/local/lib/site_ruby/1.8/${ARCH}-linux/RRD.so
@@ -488,6 +489,7 @@ installgems()
     gem install -v=0.9.2.2 rake ${GEMOPT} 
     sleep 1
     # ZK 1.0 breaks our existing code - upgrade later
+    gem --version
     gem install -v=0.9.3 zookeeper
     sleep 1
     gem install neptune right_aws ${GEMOPT}
@@ -709,8 +711,8 @@ installcassandra()
     cd pycassa-${PYCASSA_VER}
     python setup.py install
     cd ..
-    rm -fdr pycassa-${PYCASSA_VER}
-    rm -fdr pycassa-${PYCASSA_VER}.tar.gz 
+    rm -fr pycassa-${PYCASSA_VER}
+    rm -fr pycassa-${PYCASSA_VER}.tar.gz 
 }
 
 postinstallcassandra()
@@ -920,7 +922,7 @@ installzookeeper()
 
     cd ${APPSCALE_HOME}/downloads
     rm -rv zookeeper-${ZK_VER}
-    rm -fdr zookeeper-${ZK_VER}.tar.gz
+    rm -fr zookeeper-${ZK_VER}.tar.gz
 
     mkdir -pv ${DESTDIR}/var/run/zookeeper
     mkdir -pv ${DESTDIR}/var/lib/zookeeper
@@ -1005,7 +1007,7 @@ installsetuptools()
     pushd setuptools-0.6c11
     python setup.py install
     popd
-    rm -fdr  setuptools-0.6c11*
+    rm -fr setuptools-0.6c11*
 }
 
 postinstallsetuptools()
