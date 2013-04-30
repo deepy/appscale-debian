@@ -5,12 +5,33 @@
 # The function name should not include non alphabet character.
 #
 # Written by Yoshi <nomura@pobox.com>
+DIST=`lsb_release -c -s`
 
 set -e
 
 if [ -z "$APPSCALE_HOME_RUNTIME" ]; then
     export APPSCALE_HOME_RUNTIME=/opt/appscale
 fi
+
+if [ -z "$APPSCALE_PYTHON_VERSION" ]; then
+    if [ "$DIST" = "wheezy" ]; then
+        export APPSCALE_PYTHON_VERSION=python2.7
+    elif [ "$DIST" = "lucid" ]; then
+        export APPSCALE_PYTHON_VERSION=python2.5
+    else
+        irssi
+        export APPSCALE_PYTHON_VERSION=python2.6
+    fi
+fi
+
+if [ -z "$APPSCALE_PYTHON_LOCAL_LIB" ]; then
+        export APPSCALE_PYTHON_LOCAL_LIB=/usr/local/lib/$APPSCALE_PYTHON_VERSION
+fi
+
+if [ -z "$APPSCALE_PYTHON__LIB" ]; then
+    export APPSCALE_PYTHON_LIB=/usr/lib/$APPSCALE_PYTHON_VERSION
+fi
+
 #if [ -z "$APPSCALE_HOME" ]; then
  #  export APPSCALE_HOME= /root/appscale/
 #fi 
@@ -74,7 +95,7 @@ installnumpy()
     wget http://s3.amazonaws.com/appscale-build/appscale-numpy-1.7.0.tar.gz
     tar zxvf appscale-numpy-1.7.0.tar.gz
     cd numpy-1.7.0
-    python2.7 setup.py install
+    $APPSCALE_PYTHON_VERSION setup.py install
     cd ..
     rm appscale-numpy-1.7.0.tar.gz
     rm -fr numpy-1.7.0
@@ -87,7 +108,7 @@ installmatplotlib()
     wget http://s3.amazonaws.com/appscale-build/matplotlib-1.2.0.tar.gz
     tar zxvf matplotlib-1.2.0.tar.gz
     cd matplotlib-1.2.0
-    python2.7 setup.py install
+    $APPSCALE_PYTHON_VERSION setup.py install
     cd ..
     rm -fr matplotlib-1.2.0*
 }
@@ -99,7 +120,7 @@ installPIL()
     wget http://s3.amazonaws.com/appscale-build/Imaging-1.1.7.tar.gz
     tar zxvf Imaging-1.1.7.tar.gz
     cd Imaging-1.1.7
-    python2.7 setup.py install
+    $APPSCALE_PYTHON_VERSION setup.py install
     cd ..
     rm -fr Imaging-1.1.7*
 }
@@ -164,7 +185,7 @@ export EC2_PRIVATE_KEY=\${APPSCALE_HOME}/.appscale/certs/mykey.pem
 export EC2_CERT=\${APPSCALE_HOME}/.appscale/certs/mycert.pem
 EOF
 # enable to load AppServer and AppDB modules. It must be before the python-support.
-    DESTFILE=${DESTDIR}/usr/lib/python2.6/dist-packages/appscale_appserver.pth
+    DESTFILE=${DESTDIR}/$APPSCALE_PYTHON_LIB/dist-packages/appscale_appserver.pth
     mkdir -pv $(dirname $DESTFILE)
     echo "Generating $DESTFILE"
     cat <<EOF | tee $DESTFILE
@@ -172,11 +193,11 @@ ${APPSCALE_HOME_RUNTIME}/AppDB
 ${APPSCALE_HOME_RUNTIME}/AppServer
 EOF
 # enable to load site-packages of Python
-    DESTFILE=${DESTDIR}/usr/local/lib/python2.6/dist-packages/site_packages.pth
+    DESTFILE=${DESTDIR}/$APPSCALE_PYTHON_LOCAL_LIB/dist-packages/site_packages.pth
     mkdir -pv $(dirname $DESTFILE)
     echo "Generating $DESTFILE"
     cat <<EOF | tee $DESTFILE
-/usr/lib/python2.6/site-packages
+/$APPSCALE_PYTHON_LIB/site-packages
 EOF
 
     # for lucid
@@ -193,7 +214,7 @@ EOF
 	DESTFILE=${SITE_DIR}/PIL-lib.pth
 	echo "Generating $DESTFILE"
 	cat <<EOF | tee $DESTFILE
-/usr/lib/python2.6/dist-packages/PIL
+/$APPSCALE_PYTHON_LIB/dist-packages/PIL
 EOF
        # Add fpconst into python2.5
        cp /usr/lib/pymodules/python2.6/fpconst.py /usr/lib/python2.5/
@@ -255,7 +276,7 @@ postinstallthrift_fromsource()
 installthrift()
 {
     easy_install -U thrift
-    DISTP=/usr/local/lib/python2.6/dist-packages
+    DISTP=$APPSCALE_PYTHON_LOCAL_LIB/dist-packages
     if [ -z "$(find ${DISTP} -name Thrift-*.egg)" ]; then
 	echo "Fail to install python thrift client. Please retry."
 	exit 1
@@ -311,7 +332,7 @@ installtornado_fromsource()
 installtornado()
 {
     easy_install -U tornado
-    DISTP=/usr/local/lib/python2.6/dist-packages
+    DISTP=$APPSCALE_PYTHON_LOCAL_LIB/dist-packages
     if [ -z "$(find ${DISTP} -name tornado-*.egg)" ]; then
 	echo "Fail to install python tornado. Please retry."
 	exit 1
@@ -419,7 +440,7 @@ installhypertable()
     rm hypertable-${HT_VER}.deb
 
     # enable to load hypertable client of python
-    DESTFILE=${DESTDIR}/usr/local/lib/python2.6/dist-packages/hypertable_client.pth
+    DESTFILE=${DESTDIR}/$APPSCALE_PYTHON_LOCAL_LIB/dist-packages/hypertable_client.pth
     mkdir -pv $(dirname $DESTFILE)
     echo "Generating $DESTFILE"
     cat <<EOF | tee $DESTFILE
@@ -741,7 +762,7 @@ installprotobuf_fromsource()
 #    python setup.py install --prefix=${DESTDIR}/usr
     python setup.py bdist_egg
 # copy the egg file
-    DISTP=${DESTDIR}/usr/local/lib/python2.6/dist-packages
+    DISTP=${DESTDIR}/$APPSCALE_PYTHON_LOCAL_LIB/dist-packages
     mkdir -pv ${DISTP}
     cp -v dist/protobuf-*.egg ${DISTP}
     popd
@@ -755,7 +776,7 @@ installprotobuf()
 # this is not needed when we use egg to install protobuf.
     mkdir -pv ${APPSCALE_HOME}/AppServer/google
     # this should be absolute path of runtime.
-    ln -sfv /var/lib/python-support/python2.6/google/protobuf ${APPSCALE_HOME}/AppServer/google/
+    ln -sfv /var/lib/python-support/$APPSCALE_PYTHON_VERSION/google/protobuf ${APPSCALE_HOME}/AppServer/google/
 }
 
 postinstallprotobuf()
@@ -895,14 +916,14 @@ installzookeeper()
     # python library
     cd src/contrib/zkpython
     ant install
-    if [ ! -e /usr/local/lib/python2.6/dist-packages/zookeeper.so ]; then
+    if [ ! -e $APPSCALE_PYTHON_LOCAL_LIB/dist-packages/zookeeper.so ]; then
         echo "Fail to install libzookeeper. Please retry."
         exit 1
     fi
     if [ -n "${DESTDIR}" ]; then
-        mkdir -pv ${DESTDIR}/usr/local/lib/python2.6/dist-packages
-        cp -v /usr/local/lib/python2.6/dist-packages/zookeeper.so ${DESTDIR}/usr/local/lib/python2.6/dist-packages/
-        cp -v /usr/local/lib/python2.6/dist-packages/ZooKeeper-* ${DESTDIR}/usr/local/lib/python2.6/dist-packages/
+        mkdir -pv ${DESTDIR}/$APPSCALE_PYTHON_LOCAL_LIB/dist-packages
+        cp -v $APPSCALE_PYTHON_LOCAL_LIB/dist-packages/zookeeper.so ${DESTDIR}/$APPSCALE_PYTHON_LOCAL_LIB/dist-packages/
+        cp -v $APPSCALE_PYTHON_LOCAL_LIB/dist-packages/ZooKeeper-* ${DESTDIR}/$APPSCALE_PYTHON_LOCAL_LIB/dist-packages/
     fi
     cd ../../..
 
@@ -973,11 +994,11 @@ installzookeeper_deb()
     mkdir -pv ${DESTDIR}/var/lib/zookeeper
     mkdir -pv ${DESTDIR}/etc/zookeeper/conf
 # enable to load python-zookeeper
-    DESTFILE=${DESTDIR}/usr/local/lib/python2.6/dist-packages/pyshared2.6.pth
+    DESTFILE=${DESTDIR}/$APPSCALE_PYTHON_LOCAL_LIB/dist-packages/pyshared2.6.pth
     mkdir -pv $(dirname $DESTFILE)
     echo "Generating $DESTFILE"
     cat <<EOF | tee $DESTFILE
-/usr/lib/pyshared/python2.6
+/usr/lib/pyshared/$APPSCALE_PYTHON_VERSION
 EOF
 }
 
