@@ -15,6 +15,8 @@ fi
 
 if [ -z "$APPSCALE_PACKAGE_MIRROR" ]; then
     export APPSCALE_PACKAGE_MIRROR=http://s3.amazonaws.com/appscale-build
+fi
+
 if [ -z "$APPSCALE_PYTHON_VERSION" ]; then
     if [ "$DIST" = "wheezy" ]; then
         export APPSCALE_PYTHON_VERSION=python2.7
