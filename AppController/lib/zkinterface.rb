@@ -173,6 +173,26 @@ class ZKInterface
   end
 
 
+  # Erases all of the ZooKeeper entries that correspond to where an app's tar
+  # file can be found.
+  #
+  # Args:
+  #   appname: A String corresponding to the appid of the app whose hosting
+  #     data we want to erase.
+  def self.clear_app_hosters(appname)
+    if !defined?(@@zk)
+      return
+    end
+
+    appname_path = ROOT_APP_PATH + "/#{appname}"
+    app_hosters = self.get_children(appname_path)
+    app_hosters.each { |host_info|
+      self.delete(appname_path + "/#{host_info}")
+    }
+    return
+  end
+
+
   def self.get_appcontroller_state()
     return JSON.load(self.get(APPCONTROLLER_STATE_PATH))
   end
@@ -492,7 +512,7 @@ class ZKInterface
 
   # Adds an entry to ZooKeeper for the given IP, storing information about the
   # Google App engine application it is hosting that can be used to update the
-  # AppLoadBalancer should that node fail.
+  # AppDashboard should that node fail.
   def self.add_app_instance(app_name, ip, port)
     app_instance_file = "#{APPCONTROLLER_NODE_PATH}/#{ip}/#{APP_INSTANCE}"
     if self.exists?(app_instance_file)

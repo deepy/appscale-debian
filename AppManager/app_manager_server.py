@@ -2,6 +2,7 @@
 """
 # Programmer: Navraj Chohan <nlake44@gmail.com>
 
+import glob
 import json
 import logging
 import os
@@ -201,6 +202,26 @@ def stop_app_instance(app_name, port):
   file_io.delete(pid_file)
 
   return god_result
+
+def kill_app_instances_for_app(app_name):
+  """ Kills all instances of a Google App Engine application on this machine.
+
+  Args:
+    app_name: The application ID corresponding to the app to kill.
+
+  Returns:
+    A list of the process IDs whose instances were terminated.
+  """
+  pid_files = glob.glob(constants.APP_PID_DIR + app_name + '-*')
+  pids_killed = []
+  for pid_file in pid_files:
+    pid = file_io.read(pid_file)
+    if subprocess.call(['kill', '-9', pid]) == 0:
+      pids_killed.append(pid)
+    else:
+      logging.error("Unable to kill app process %s with pid %s" % \
+                    (app_name, str(pid)))
+  return pids_killed
 
 def stop_app(app_name):
   """ Stops all process instances of a Google App Engine application on this 
@@ -409,6 +430,15 @@ def copy_modified_jars(app_name):
                   "to lib directory of " + app_name)
     return False
   
+  cp_result = subprocess.call("cp " + appscale_home + "/AppServer_Java/" +\
+                              "appengine-java-sdk-repacked/lib/impl/" +\
+                              "appscale-*.jar /var/apps/" + app_name + "/" +\
+                              "app/war/WEB-INF/lib/", shell=True)
+
+  if cp_result != 0:
+    logging.error("Failed to copy email jars to lib directory of " + app_name)
+    return False
+
   return True
 
 def create_java_start_cmd(app_name,
@@ -434,6 +464,9 @@ def create_java_start_cmd(app_name,
              "./genKeystore.sh &&",
              "./appengine-java-sdk-repacked/bin/dev_appserver.sh",
              "--port=" + str(port),
+             #this jvm flag allows javax.email to connect to the smtp server
+             "--jvm_flag=-Dsocket.permit_connect=true",
+             "--disable_update_check",
              "--cookie_secret=" + appscale_info.get_secret(),
              "--address=" + appscale_info.get_private_ip(),
              "--datastore_path=" + db_location,
@@ -543,6 +576,7 @@ if __name__ == "__main__":
   server.registerFunction(start_app)
   server.registerFunction(stop_app)
   server.registerFunction(stop_app_instance)
+  server.registerFunction(kill_app_instances_for_app)
 
   file_io.set_logging_format()
   
