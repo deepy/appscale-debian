@@ -92,7 +92,7 @@ installnumpy()
 {
     mkdir -pv ${APPSCALE_HOME}/downloads
     cd ${APPSCALE_HOME}/downloads
-    wget http://s3.amazonaws.com/appscale-build/appscale-numpy-1.7.0.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/appscale-numpy-1.7.0.tar.gz
     tar zxvf appscale-numpy-1.7.0.tar.gz
     cd numpy-1.7.0
     $APPSCALE_PYTHON_VERSION setup.py install
@@ -105,7 +105,7 @@ installmatplotlib()
 {
     mkdir -pv ${APPSCALE_HOME}/downloads
     cd ${APPSCALE_HOME}/downloads
-    wget http://s3.amazonaws.com/appscale-build/matplotlib-1.2.0.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/matplotlib-1.2.0.tar.gz
     tar zxvf matplotlib-1.2.0.tar.gz
     cd matplotlib-1.2.0
     $APPSCALE_PYTHON_VERSION setup.py install
@@ -117,7 +117,7 @@ installPIL()
 {
     mkdir -pv ${APPSCALE_HOME}/downloads
     cd ${APPSCALE_HOME}/downloads
-    wget http://s3.amazonaws.com/appscale-build/Imaging-1.1.7.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/Imaging-1.1.7.tar.gz
     tar zxvf Imaging-1.1.7.tar.gz
     cd Imaging-1.1.7
     $APPSCALE_PYTHON_VERSION setup.py install
@@ -249,7 +249,7 @@ installthrift_fromsource()
     mkdir -pv ${APPSCALE_HOME}/downloads
     cd ${APPSCALE_HOME}/downloads
     # apache 0.2.0
-    wget http://s3.amazonaws.com/appscale-build/thrift-${THRIFT_VER}.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/thrift-${THRIFT_VER}.tar.gz
     tar zxfv thrift-${THRIFT_VER}.tar.gz
     rm -v thrift-${THRIFT_VER}.tar.gz
     pushd thrift-${THRIFT_VER}
@@ -317,7 +317,7 @@ installtornado_fromsource()
     cd ${APPSCALE_HOME}/downloads
     rm -rfv tornado
     # download from appscale site
-    wget http://s3.amazonaws.com/appscale-build/tornado-0.2.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/tornado-0.2.tar.gz
     tar xvzf tornado-0.2.tar.gz
     pushd tornado-0.2
     python setup.py build
@@ -369,7 +369,7 @@ installhaproxy()
     cd ${APPSCALE_HOME}/downloads
     rm -rfv haproxy*
 # download from appscale site
-    wget http://s3.amazonaws.com/appscale-build/haproxy-${HAPROXY_VER}.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/haproxy-${HAPROXY_VER}.tar.gz
     tar zxvf haproxy-${HAPROXY_VER}.tar.gz
     rm -v haproxy-${HAPROXY_VER}.tar.gz
 
@@ -404,7 +404,7 @@ installtmux()
 {
     # First, install tmux (do it from source to get the newest features)
     cd ${APPSCALE_HOME}
-    wget http://s3.amazonaws.com/appscale-build/tmux-1.6.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/tmux-1.6.tar.gz
     tar zxvf tmux-1.6.tar.gz
     cd tmux-1.6
     ./configure
@@ -415,7 +415,7 @@ installtmux()
     
     # Finally, grab our tmux config file and put it in the right place
     cd
-    wget http://s3.amazonaws.com/appscale-build/tmux.conf -O .tmux.conf
+    wget -c http://s3.amazonaws.com/appscale-build/tmux.conf -O .tmux.conf
 }
 
 postinstalltmux()
@@ -435,9 +435,9 @@ installhypertable()
     fi
     gem install titleize
     # extract binary files and repackage it when making deb
-    wget http://s3.amazonaws.com/appscale-build/hypertable-${HT_VER}-linux-${ARCH}.deb -O hypertable-${HT_VER}.deb
+    wget -c http://s3.amazonaws.com/appscale-build/hypertable-${HT_VER}-linux-${ARCH}.deb -O hypertable-${HT_VER}.deb
     dpkg-deb --vextract hypertable-${HT_VER}.deb ${DESTDIR}/
-    rm hypertable-${HT_VER}.deb
+    #rm hypertable-${HT_VER}.deb for #7
 
     # enable to load hypertable client of python
     DESTFILE=${DESTDIR}/$APPSCALE_PYTHON_LOCAL_LIB/dist-packages/hypertable_client.pth
@@ -472,7 +472,7 @@ installhypertablemonitoring()
     # For hypertable monitoring
     gem install sinatra rack thin json ${GEMOPT}
     cd ${APPSCALE_HOME}/downloads
-    wget http://s3.amazonaws.com/appscale-build/rrdtool-1.4.4.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/rrdtool-1.4.4.tar.gz
     tar zxvf rrdtool-1.4.4.tar.gz
     cd rrdtool-1.4.4/
     ./configure 
@@ -494,15 +494,15 @@ installgems()
 {
     # install gem here
     cd
-    wget http://s3.amazonaws.com/appscale-build/rubygems-1.3.7.tgz
+    wget -c http://s3.amazonaws.com/appscale-build/rubygems-1.3.7.tgz
     tar zxvf rubygems-1.3.7.tgz
     cd rubygems-1.3.7
     ruby1.8 setup.rb
     cd
     #ln -sf /usr/bin/gem1.8 /usr/bin/gem
     update-alternatives --install /usr/bin/gem gem /usr/bin/gem1.8 1 
-    rm -rf rubygems-1.3.7.tgz
-    rm -rf rubygems-1.3.7
+    #rm -rf rubygems-1.3.7.tgz for #7
+    #rm -rf rubygems-1.3.7 for #7
 
     # gem update
     GEMOPT="--no-rdoc --no-ri"
@@ -581,7 +581,7 @@ installnginx()
     NGINX_VERSION=1.2.6
     mkdir -pv ${APPSCALE_HOME}/downloads
     cd ${APPSCALE_HOME}/downloads
-    wget http://s3.amazonaws.com/appscale-build/nginx-${NGINX_VERSION}.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/nginx-${NGINX_VERSION}.tar.gz
     tar zxvf nginx-${NGINX_VERSION}.tar.gz
     rm -v nginx-${NGINX_VERSION}.tar.gz
     pushd nginx-${NGINX_VERSION}
@@ -591,7 +591,7 @@ installnginx()
     make
     make install
     popd
-    rm -rv nginx-${NGINX_VERSION}
+    #rm -rv nginx-${NGINX_VERSION} for #7
 }
 
 # This function is called from postinst.core, so we don't need to use DESTDIR
@@ -611,7 +611,7 @@ installhadoop()
     mkdir -pv ${APPSCALE_HOME}/AppDB
     cd ${APPSCALE_HOME}/AppDB
     rm -rfv hadoop-${HADOOP_VER}
-    wget http://s3.amazonaws.com/appscale-build/hadoop-${HADOOP_VER}.tar.gz -O hadoop-${HADOOP_VER}.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/hadoop-${HADOOP_VER}.tar.gz -O hadoop-${HADOOP_VER}.tar.gz
     tar xvzf hadoop-${HADOOP_VER}.tar.gz
     rm -v hadoop-${HADOOP_VER}.tar.gz
     cd hadoop-${HADOOP_VER}
@@ -668,16 +668,16 @@ installhbase()
     mkdir -pv ${APPSCALE_HOME}/AppDB/hbase
     cd ${APPSCALE_HOME}/AppDB/hbase
     rm -rfv hbase-${HBASE_VER}
-    wget http://s3.amazonaws.com/appscale-build/hbase-${HBASE_VER}-rebuilt.tar.gz -O hbase-${HBASE_VER}.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/hbase-${HBASE_VER}-rebuilt.tar.gz -O hbase-${HBASE_VER}.tar.gz
 
     tar zxvf hbase-${HBASE_VER}.tar.gz
-    rm -v hbase-${HBASE_VER}.tar.gz
+    #rm -v hbase-${HBASE_VER}.tar.gz for #7
     # Clean out the maven repository
-    rm -rfd ~/.m2/
+    rm -rf ~/.m2/
     cd
-    wget http://s3.amazonaws.com/appscale-build/maven_repos.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/maven_repos.tar.gz
     tar zxvf maven_repos.tar.gz
-    rm -rv maven_repos.tar.gz 
+    #rm -rv maven_repos.tar.gz for #7
     ######
     # What we did to create the tar'ed version of HBase: See AppScale 1.5 
     ####
@@ -695,15 +695,15 @@ installcassandra()
     CASSANDRA_VER=1.0.7
     PYCASSA_VER=1.3.0
     cd /lib 
-    wget http://s3.amazonaws.com/appscale-build/jamm-0.2.2.jar
+    wget -c http://s3.amazonaws.com/appscale-build/jamm-0.2.2.jar
     
     mkdir -p ${APPSCALE_HOME}/AppDB/cassandra
     cd ${APPSCALE_HOME}/AppDB/cassandra
     rm -rfv cassandra
-    wget http://s3.amazonaws.com/appscale-build/apache-cassandra-${CASSANDRA_VER}-bin.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/apache-cassandra-${CASSANDRA_VER}-bin.tar.gz
     tar xzvf apache-cassandra-${CASSANDRA_VER}-bin.tar.gz
     mv -v apache-cassandra-${CASSANDRA_VER} cassandra
-    rm -fv apache-cassandra-${CASSANDRA_VER}-bin.tar.gz
+    #rm -fv apache-cassandra-${CASSANDRA_VER}-bin.tar.gz for #7
     cd cassandra
     chmod -v +x bin/cassandra
     cp -v ${APPSCALE_HOME}/AppDB/cassandra/templates/cassandra.in.sh ${APPSCALE_HOME}/AppDB/cassandra/cassandra/bin
@@ -727,13 +727,13 @@ installcassandra()
 
     mkdir -pv ${APPSCALE_HOME}/downloads
     cd ${APPSCALE_HOME}/downloads
-    wget http://s3.amazonaws.com/appscale-build/pycassa-${PYCASSA_VER}.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/pycassa-${PYCASSA_VER}.tar.gz
     tar zxvf pycassa-${PYCASSA_VER}.tar.gz  
     cd pycassa-${PYCASSA_VER}
     python setup.py install
     cd ..
     rm -fr pycassa-${PYCASSA_VER}
-    rm -fr pycassa-${PYCASSA_VER}.tar.gz 
+    #rm -fr pycassa-${PYCASSA_VER}.tar.gz for #7
 }
 
 postinstallcassandra()
@@ -749,9 +749,9 @@ installprotobuf_fromsource()
     # install protobuf 2.3.0. we need egg version for python.
     mkdir -pv ${APPSCALE_HOME}/downloads
     cd ${APPSCALE_HOME}/downloads
-    wget http://s3.amazonaws.com/appscale-build/protobuf-${PROTOBUF_VER}.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/protobuf-${PROTOBUF_VER}.tar.gz
     tar zxvf protobuf-${PROTOBUF_VER}.tar.gz
-    rm -v protobuf-${PROTOBUF_VER}.tar.gz
+    #rm -v protobuf-${PROTOBUF_VER}.tar.gz for #7
     pushd protobuf-${PROTOBUF_VER}
     ./configure --prefix=/usr
     make
@@ -812,19 +812,19 @@ installpig()
 {
     mkdir -pv ${APPSCALE_HOME}/downloads
     cd ${APPSCALE_HOME}/downloads
-    wget http://apache.deathculture.net/hadoop/pig/pig-0.5.0/pig-0.5.0.tar.gz
+    wget -c http://apache.deathculture.net/hadoop/pig/pig-0.5.0/pig-0.5.0.tar.gz
     tar zxvf pig-0.5.0.tar.gz
-    rm -v pig-0.5.0.tar.gz
+    #rm -v pig-0.5.0.tar.gz for #7
     cd pig-0.5.0
     mkdir tmp
     cp -v pig-0.5.0-core.jar tmp/
     cd tmp
     jar xvf pig-0.5.0-core.jar
-    rm -rfv pig-0.5.0-core.jar
+    #rm -rfv pig-0.5.0-core.jar for #7
     /bin/cp -fv ~/appscale/AppDB/hadoop-0.20.2/build/classes/org/apache/hadoop/hdfs/* ${APPSCALE_HOME}/downloads/pig-0.5.0/tmp/org/apache/hadoop/hdfs/
     jar cvf ../pig-0.5.0-core.jar ./*
     rm -rfv ./*
-    wget http://s3.amazonaws.com/appscale-build/pigtutorial.tar.gz
+    wget -c http://s3.amazonaws.com/appscale-build/pigtutorial.tar.gz
     tar zxvf pigtutorial.tar.gz
     DESTFILE=${DESTDIR}/etc/profile.d/pig.sh
     mkdir -pv $(dirname $DESTFILE)

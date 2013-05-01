@@ -69,10 +69,10 @@ case "$1" in
 	installhypertable
 	postinstallhypertable
 	;;
-    mysql)
-	installmysql
-	postinstallmysql
-	;;
+    #mysql)
+	#installmysql
+	#postinstallmysql
+	#;;
     # for test only. this should be included in core and all.
     zookeeper)
 	installzookeeper
@@ -133,8 +133,8 @@ case "$1" in
 	postinstallhbase
 	installhypertable
 	postinstallhypertable
-	installmysql
-	postinstallmysql
+	#installmysql
+	#postinstallmysql
         installrabbitmq
         postinstallrabbitmq
         installcelery
