@@ -36,9 +36,14 @@ if [ -z "$APPSCALE_PYTHON__LIB" ]; then
     export APPSCALE_PYTHON_LIB=/usr/lib/$APPSCALE_PYTHON_VERSION
 fi
 
-#if [ -z "$APPSCALE_HOME" ]; then
- #  export APPSCALE_HOME= /root/appscale/
-#fi 
+if [ -d "$APPSCALE_HOME/virtualenv" ]; then
+    printenv APPSCALE_PACKAGE_MIRROR
+    source $APPSCALE_HOME/virtualenv/bin/activate
+else
+    virtualenv $APPSCALE_HOME/virtualenv
+    source $APPSCALE_HOME/virtualenv/bin/activate
+fi
+
 export APPSCALE_VERSION=1.6.9
 
 increaseconnections()
@@ -94,54 +99,60 @@ installpython27()
 
 installnumpy()
 {
-    mkdir -pv ${APPSCALE_HOME}/downloads
-    cd ${APPSCALE_HOME}/downloads
-    wget -c $APPSCALE_PACKAGE_MIRROR/appscale-numpy-1.7.0.tar.gz
-    tar zxvf appscale-numpy-1.7.0.tar.gz
-    cd numpy-1.7.0
-    $APPSCALE_PYTHON_VERSION setup.py install
-    cd ..
-    rm appscale-numpy-1.7.0.tar.gz
-    rm -fr numpy-1.7.0
+    #mkdir -pv ${APPSCALE_HOME}/downloads
+    #cd ${APPSCALE_HOME}/downloads
+    #wget -c $APPSCALE_PACKAGE_MIRROR/appscale-numpy-1.7.0.tar.gz
+    #tar zxvf appscale-numpy-1.7.0.tar.gz
+    #cd numpy-1.7.0
+    #$APPSCALE_PYTHON_VERSION setup.py install
+    #cd ..
+    #rm appscale-numpy-1.7.0.tar.gz
+    #rm -fr numpy-1.7.0
+    pip install $APPSCALE_PACKAGE_MIRROR/appscale-numpy-1.7.0.tar.gz
 }
 
 installmatplotlib()
 {
-    mkdir -pv ${APPSCALE_HOME}/downloads
-    cd ${APPSCALE_HOME}/downloads
-    wget -c $APPSCALE_PACKAGE_MIRROR/matplotlib-1.2.0.tar.gz
-    tar zxvf matplotlib-1.2.0.tar.gz
-    cd matplotlib-1.2.0
-    $APPSCALE_PYTHON_VERSION setup.py install
-    cd ..
-    rm -fr matplotlib-1.2.0*
+    #mkdir -pv ${APPSCALE_HOME}/downloads
+    #cd ${APPSCALE_HOME}/downloads
+    #wget -c $APPSCALE_PACKAGE_MIRROR/matplotlib-1.2.0.tar.gz
+    #tar zxvf matplotlib-1.2.0.tar.gz
+    #cd matplotlib-1.2.0
+    #$APPSCALE_PYTHON_VERSION setup.py install
+    #cd ..
+    #rm -fr matplotlib-1.2.0*
+    pip install $APPSCALE_PACKAGE_MIRROR/matplotlib-1.2.0.tar.gz
 }
 
 installPIL()
 {
-    mkdir -pv ${APPSCALE_HOME}/downloads
-    cd ${APPSCALE_HOME}/downloads
-    wget -c $APPSCALE_PACKAGE_MIRROR/Imaging-1.1.7.tar.gz
-    tar zxvf Imaging-1.1.7.tar.gz
-    cd Imaging-1.1.7
-    $APPSCALE_PYTHON_VERSION setup.py install
-    cd ..
-    rm -fr Imaging-1.1.7*
+    #mkdir -pv ${APPSCALE_HOME}/downloads
+    #cd ${APPSCALE_HOME}/downloads
+    #wget -c $APPSCALE_PACKAGE_MIRROR/Imaging-1.1.7.tar.gz
+    #tar zxvf Imaging-1.1.7.tar.gz
+    #cd Imaging-1.1.7
+    #$APPSCALE_PYTHON_VERSION setup.py install
+    #cd ..
+    #rm -fr Imaging-1.1.7*
+    pip install $APPSCALE_PACKAGE_MIRROR/Imaging-1.1.7.tar.gz
 }
 
 installpycrypto()
 {
-    easy_install pycrypto
+    #easy_install pycrypto
+    pip install pycrypto
 }
 
 installlxml()
 {
-    easy_install lxml
+    #easy_install lxml
+    pip install pycrypto
 }
 
 installxmpppy()
 {
-    easy_install xmpppy
+    #easy_install xmpppy
+    pip install xmpppy
 }
 
 setulimits()
@@ -760,15 +771,17 @@ installprotobuf_fromsource()
     make
     make check
     make install
-    pushd python
+    #pushd python
 # protobuf could not be installed in the different root
 #    python setup.py install --prefix=${DESTDIR}/usr
-    python setup.py bdist_egg
+    #python setup.py bdist_egg
+    #TODO: VIRTUALENV
+    pip install protobuf==2.3.0
 # copy the egg file
-    DISTP=${DESTDIR}/$APPSCALE_PYTHON_LOCAL_LIB/dist-packages
-    mkdir -pv ${DISTP}
-    cp -v dist/protobuf-*.egg ${DISTP}
-    popd
+    #DISTP=${DESTDIR}/$APPSCALE_PYTHON_LOCAL_LIB/dist-packages
+    #mkdir -pv ${DISTP}
+    #cp -v dist/protobuf-*.egg ${DISTP}
+    #popd
     popd
     rm -rv protobuf-${PROTOBUF_VER}
 }
@@ -778,9 +791,11 @@ installprotobuf()
 # make protobuf module loadable
 # this is not needed when we use egg to install protobuf.
     mkdir -pv ${APPSCALE_HOME}/AppServer/google
-    # this should be absolute path of runtime.
+    # this should be absolute path of runtime. TODO: VIRTUALENV
     ln -sfv /var/lib/python-support/$APPSCALE_PYTHON_VERSION/google/protobuf ${APPSCALE_HOME}/AppServer/google/
+
 }
+
 
 postinstallprotobuf()
 {

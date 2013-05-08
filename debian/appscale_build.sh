@@ -95,7 +95,8 @@ apt-get install -y autoconf automake libtool gcc g++ pkg-config ant maven2\
  libbz2-dev libreadline-dev libgdbm-dev swig screen\
  libsqlite3-dev\
  libcppunit-dev\
- libcairo2-dev libpango1.0-dev libxml2-dev libart-2.0-2
+ libcairo2-dev libpango1.0-dev libxml2-dev libart-2.0-2\
+ python-virtualenv #TODO: somewhere more suitable.
 
 if [ $? -ne 0 ]; then
     echo "Fail to install depending packages for building."
