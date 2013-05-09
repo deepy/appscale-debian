@@ -18,7 +18,7 @@ case "$1" in
 	. /etc/profile.d/appscale.sh
 	installgems
 	postinstallgems
-        installsetuptools
+        #installsetuptools #already included in virtualenv
 	installhaproxy
 	postinstallhaproxy
 	installnginx

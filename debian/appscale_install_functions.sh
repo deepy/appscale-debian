@@ -360,12 +360,14 @@ installtornado()
 
 installnose()
 {
-  easy_install nose
+  #easy_install nose
+  pip install nose
 }
 
 installflexmock()
 {
-    easy_install flexmock
+    #easy_install flexmock
+    pip install nose
 }
 
 postinstalltornado()
@@ -928,7 +930,8 @@ installzookeeper()
     #patch -p0 -i ${APPSCALE_HOME}/AppDB/zkappscale/patch/zkpython-memory.patch
 
     # python library
-    easy_install kazoo
+    #easy_install kazoo
+    pip install kazoo
 
     # install java library
     mkdir -pv ${DESTDIR}/usr/share/java
@@ -1022,23 +1025,6 @@ postinstallzookeeper()
     update-rc.d -f zookeeper remove || true
 }
 
-installsetuptools()
-{
-    mkdir -pv ${APPSCALE_HOME}/downloads
-    cd ${APPSCALE_HOME}/downloads
-    wget -c $APPSCALE_PACKAGE_MIRROR/setuptools-0.6c11.tar.gz
-    tar zxvf setuptools-0.6c11.tar.gz
-    pushd setuptools-0.6c11
-    python setup.py install
-    popd
-    rm -fr setuptools-0.6c11*
-}
-
-postinstallsetuptools()
-{
-    :;
-}
-
 keygen()
 {
     test -e /root/.ssh/id_rsa || ssh-keygen -q -t rsa -f /root/.ssh/id_rsa -N ""
@@ -1050,7 +1036,8 @@ keygen()
 
 installcelery()
 {
-  easy_install -U Celery
+  #easy_install -U Celery
+  pip install Celery
 }
 
 installrabbitmq()
